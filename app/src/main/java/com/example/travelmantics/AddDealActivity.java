@@ -196,11 +196,6 @@ public class AddDealActivity extends AppCompatActivity {
                         showImage(downloadUri.toString());
                     }
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("error",e.getMessage());
-                }
             });
         }
 
