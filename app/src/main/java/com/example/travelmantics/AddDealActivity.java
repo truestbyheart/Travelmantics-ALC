@@ -1,5 +1,6 @@
 package com.example.travelmantics;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -39,6 +40,7 @@ public class AddDealActivity extends AppCompatActivity {
     Button btnImage;
     TravelDeal deal;
     ImageView imageView;
+    ProgressDialog progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class AddDealActivity extends AppCompatActivity {
         txtPrice = (EditText) findViewById(R.id.txtPrice);
         btnImage = findViewById(R.id.btnImage);
         imageView = (ImageView) findViewById(R.id.image);
+        progressBar = new ProgressDialog(this);
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,6 +179,9 @@ public class AddDealActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
             final StorageReference ref = FirebaseUtil.mStorageRef.child(((Uri) imageUri).getLastPathSegment());
             final UploadTask uploadTask = ref.putFile(imageUri);
+            progressBar.setMessage("uploading image....");
+            progressBar.show();
+
 
             Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -194,6 +200,7 @@ public class AddDealActivity extends AppCompatActivity {
                         deal.setImageUrl(downloadUri.toString());
                         deal.setImageName(pictureName);
                         showImage(downloadUri.toString());
+                        progressBar.dismiss();
                     }
                 }
             });
@@ -205,7 +212,6 @@ public class AddDealActivity extends AppCompatActivity {
 
 if(url != null && url.isEmpty() == false) {
     int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-
     Picasso.with(this)
             .load(url)
             .resize(width,width*2/3)
